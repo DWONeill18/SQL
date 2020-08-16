@@ -68,3 +68,82 @@ FROM january
 LEFT JOIN february
     ON january.user_id = february.user_id
 WHERE february.user_id IS NULL;
+
+/* For each month in months, we want to know if each user in premium_users was active or canceled. Cross join months and premium_users and select:
+
+user_id from premium_users
+purchase_date from premium_users
+cancel_date from premium_users
+months from months */
+
+SELECT user_id, purchase_date, cancel_date, months
+FROM months
+CROSS JOIN premium_users;
+
+/* This will tell us if a particular user is 'active' or 'not_active' each month. */
+
+ SELECT premium_users.user_id,
+  months.months,
+  CASE
+    WHEN (
+      premium_users.purchase_date <= months.months
+      )
+      AND
+      (
+        premium_users.cancel_date >= months.months
+        OR
+        premium_users.cancel_date IS NULL
+      )
+    THEN 'active'
+    ELSE 'not_active'
+  END AS 'status'
+FROM premium_users
+CROSS JOIN months;
+
+/* Songify has added some new songs to their catalog.
+
+Combine songs and bonus_songs using UNION and select all columns from the result.
+
+Since the songs table is so big, just look at a sample by LIMITing the results to 10 rows */
+
+SELECT *
+FROM songs
+UNION
+SELECT *
+FROM bonus_songs
+LIMIT 10;
+
+/* Modify the query in test.sqlite:
+
+Add a third UNION/SELECT so that the result contains 2017-03-01. */
+
+SELECT '2017-01-01' as month
+UNION
+SELECT '2017-02-01' as month
+UNION
+SELECT '2017-03-01' as month;
+
+/* Use a WITH statement to alias this code as play_count.
+
+Join play_count with songs and select (in this order):
+
+songs table’s title column
+songs table’s artist column
+play_count‘s times_played column
+Remember that play_count.song_id will match songs.id. */
+
+WITH play_count AS (
+  SELECT song_id,
+     COUNT(*) as times_played
+  FROM plays
+  GROUP BY song_id)
+SELECT songs.title,
+	songs.artist,
+  play_count.times_played
+FROM play_count
+JOIN songs
+	ON play_count.song_id = songs.id;
+
+
+
+
