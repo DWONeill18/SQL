@@ -54,10 +54,10 @@ JOIN classes
 For each month (1, 2, 3) we would need to know if a user was subscribed. Follow the steps 
 below to see how we can use a CROSS JOIN to solve this problem. */
 
-ELECT month,
+SELECT month,
   COUNT(*)
 FROM newspaper
-CROS JOIN months
+CROSS JOIN months
 WHERE start_month <= month AND end_month >= month
 GROUP BY month;
 
