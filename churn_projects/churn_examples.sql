@@ -158,8 +158,20 @@ FROM cross_join
 LIMIT 100;
 
 
+/* Multiple Month: Determine Active Status */
+/* If you remember our single month example, our ultimate calculation will make use of the status temporary table.
+The first column of this table was used in the denominator of our churn calculation:
 
+is_active: if the subscription started before the given month and has not been canceled before the start of the given month */
 ---------------------------
+
+/* Add a status temporary table. This table should have the following columns:
+
+id - selected from the cross_join table
+month - this is an alias of first_day from the cross_join table. We’re using the first day of the month to represent which month this data is for.
+is_active - 0 or 1, derive this column using a CASE WHEN statement
+The is_active column should be 1 if the subscription_start is before the month’s first_day and if the subscription_end is either after the month’s first_day or is NULL. */
+
 WITH months AS
 (SELECT
   '2017-01-01' as first_day,
@@ -192,9 +204,18 @@ SELECT *
 FROM status
 LIMIT 100;
 
+/* Multiple Month: Determine Cancellation Status */
 
+/* For our calculation, we’ll need one more column on the status temporary table: is_canceled
+
+This column will be 1 only during the month that the user cancels. */
 ----------------------------------
-ITH months AS
+
+/* Add an is_canceled column to the status temporary table. Ensure that it is equal to 1 in months containing the subscription_end and 0 otherwise.
+
+Derive this column using a CASE WHEN statement. You can use the BETWEEN function to check if a date falls between two others. */
+
+WITH months AS
 (SELECT
   '2017-01-01' as first_day,
   '2017-01-31' as last_day
@@ -229,7 +250,23 @@ FROM cross_join)
 SELECT *
 FROM status
 
+/* Multiple Month: Sum Active And Cancelled Users */
+/*
+
+Now that we have an active and canceled status for each subscription for each month, we can aggregate them.
+
+We will GROUP BY month and create a SUM() of the two columns from the status table, is_active and is_canceled.
+
+This provides a list of months, with their corresponding number of active users at the beginning of the month and the number of those users who cancel during the month.
+*/
 ----------------------------------------
+/*
+Add a status_aggregate temporary table. This table should have the following columns:
+
+month - selected from the status table
+active - the SUM() of active users for this month
+canceled - the SUM() of canceled users for this month
+*/
 
 WITH months AS
 (SELECT
@@ -273,7 +310,18 @@ GROUP BY month)
 SELECT *
 FROM status_aggregate;
 
+/* Multiple Month: Churn Rate Calculation */
+/* Now comes the moment we’ve been waiting for - the actual churn rate.
+
+We use the number of canceled and active subscriptions to calculate churn for each month: churn_rate = canceled / active */
 ---------------------------
+
+/*
+Add a SELECT statement to calculate the churn rate. The result should contain two columns:
+
+month - selected from status_aggregate
+churn_rate - calculated from status_aggregate.canceled and status_aggregate.active.
+*/
 
 WITH months AS
 (SELECT
