@@ -18,4 +18,8 @@ Codeflix requires a minimum subscription length of 31 days, so a user can never 
  FROM subscriptions
  LIMIT 100;
 
- 
+ /* 
+Determine the range of months of data provided. Which months will you be able to calculate churn for? */
+
+SELECT min(subscription_start), max(subscription_end)
+FROM subscriptions;
