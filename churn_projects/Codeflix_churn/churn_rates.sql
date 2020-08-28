@@ -41,3 +41,75 @@ SELECT
   '2017-03-31' AS last_day
 )
 
+/* Create a temporary table, cross_join, from subscriptions and your months. Be sure to SELECT every column. */
+
+cross_join AS
+(SELECT *
+FROM subscriptions
+CROSS JOIN months)
+
+/* Create a temporary table, status, from the cross_join table you created. This table should contain:
+
+id selected from cross_join
+month as an alias of first_day
+is_active_87 created using a CASE WHEN to find any users from segment 87 who existed prior to the beginning of the month. This is 1 if true and 0 otherwise.
+is_active_30 created using a CASE WHEN to find any users from segment 30 who existed prior to the beginning of the month. This is 1 if true and 0 otherwise. */
+
+tatus AS
+(SELECT id.cross_join,
+ first_day AS month,
+CASE
+  WHEN (subscription_start < first_day
+    AND segement = 87)
+    AND (subscription_end > first_day
+    OR subscription_end IS NULL
+    ) THEN 1
+  ELSE 0
+END as is_active_87,
+CASE
+  WHEN (subscription_start < first_day
+    AND segment = 30))
+    AND (subscription_end > first_day
+    OR subscription_end IS NULL
+    ) THEN 1
+  ELSE 0
+END as is_active_30
+)
+SELECT *
+FROM status;
+
+/* Add an is_canceled_87 and an is_canceled_30 column to the status temporary table. 
+This should be 1 if the subscription is canceled during the month and 0 otherwise. */
+
+status AS
+(SELECT id.cross_join,
+ first_day AS month,
+CASE
+  WHEN (subscription_start < first_day
+    AND segment = 87)
+    AND (subscription_end > first_day
+    OR subscription_end IS NULL
+    ) THEN 1
+  ELSE 0
+END as is_active_87,
+CASE
+  WHEN (subscription_start < first_day
+    AND segment = 30))
+    AND (subscription_end > first_day
+    OR subscription_end IS NULL
+    ) THEN 1
+  ELSE 0
+END as is_active_30,
+CASE
+  WHEN (subscription_end BETWEEN first_day AND last_day)
+    AND (segment = 87) THEN 1
+  ELSE 0
+END as is_canceled_87,
+ASE
+  WHEN (subscription_end BETWEEN first_day AND last_day)
+    AND (segment = 30) THEN 1
+  ELSE 0
+END as is_canceled_30,
+)
+SELECT *
+FROM status;
