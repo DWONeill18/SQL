@@ -109,7 +109,23 @@ ASE
   WHEN (subscription_end BETWEEN first_day AND last_day)
     AND (segment = 30) THEN 1
   ELSE 0
-END as is_canceled_30,
-)
-SELECT *
-FROM status;
+END as is_canceled_30
+FROM cross_join
+)   
+
+/* Create a status_aggregate temporary table that is a SUM of the active and canceled subscriptions for each segment, for each month.
+
+The resulting columns should be:
+
+sum_active_87
+sum_active_30
+sum_canceled_87
+sum_canceled_30 */
+
+status_aggregate AS
+(SELECT SUM(is_active_87) AS sum_active_87,
+  SUM(is_active_30) AS sum_active_30,
+  SUM(is_canceled_87) AS sum_canceled_87,
+  SUM(is_canceled_30) AS sum_canceled_30
+  FROM status
+  GROUP BY month)
