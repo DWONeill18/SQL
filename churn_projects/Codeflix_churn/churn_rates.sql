@@ -129,3 +129,13 @@ status_aggregate AS
   SUM(is_canceled_30) AS sum_canceled_30
   FROM status
   GROUP BY month)
+
+/* Churn calculation */
+/* Calculate the churn rates for the two segments over the three month period. Which segment has a lower churn rate? */
+
+SELECT month,
+1.0 * (sum_canceled_30/sum_active_30 AS churn_rate_30),
+1.0 * (sum_canceled_87/sum_active_87 AS churn_rate_87)
+FROM status_aggregate;
+
+/* How would you modify this code to support a large number of segments? */
