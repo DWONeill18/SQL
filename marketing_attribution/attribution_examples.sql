@@ -38,3 +38,23 @@ SELECT *
 FROM page_visits
 WHERE user_id = 10069;
 
+/* First v Last */
+
+/* If you want to increase sales at CoolTShirts.com, would you count on buzzfeed or increase facebook ads? The real question is: should June’s purchase be attributed to buzzfeed or to facebook?
+
+There are two ways of analyzing this:
+
+First-touch attribution only considers the first utm_source for each customer, which would be buzzfeed in this case. This is a good way of knowing how visitors initially discover a website.
+Last-touch attribution only considers the last utm_source for each customer, which would be facebook in this case. This is a good way of knowing how visitors are drawn back to a website, especially for making a final purchase.
+The results can be crucial to improving a company’s marketing and online presence. Most companies analyze both first- and last-touch attribution and display the results separately. */
+
+/* June’s sister also visited CoolTShirts.com!
+
+Select all columns from the page_visits table, using a WHERE clause with user_id = 10329.
+
+What are her first- and last-touch attributions? */
+
+SELECT *
+FROM page_visits
+WHERE user_id = 10329;
+
